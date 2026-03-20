@@ -1,8 +1,24 @@
 pipeline {
     agent {
-        docker {
-            image 'docker:24.0.7'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        kubernetes {
+            yaml """
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker
+    image: docker:24.0.7
+    command:
+    - cat
+    tty: true
+    volumeMounts:
+    - name: docker-sock
+      mountPath: /var/run/docker.sock
+  volumes:
+  - name: docker-sock
+    hostPath:
+      path: /var/run/docker.sock
+"""
         }
     }
 
@@ -12,19 +28,23 @@ pipeline {
 
     stages {
 
-        stage('Build Docker Image') {
+        stage('Build Image') {
             steps {
-                sh 'docker build -t $DOCKER_IMAGE app/'
+                container('docker') {
+                    sh 'docker build -t $DOCKER_IMAGE app/'
+                }
             }
         }
 
         stage('Push Image') {
             steps {
-                sh 'docker push $DOCKER_IMAGE'
+                container('docker') {
+                    sh 'docker push $DOCKER_IMAGE'
+                }
             }
         }
 
-        stage('Deploy with Helm') {
+        stage('Deploy') {
             steps {
                 sh 'helm upgrade devops-demo ./devops-demo'
             }
