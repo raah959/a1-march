@@ -28,8 +28,6 @@ containers:
   DOCKER_IMAGE = "mrdevops0959/devops-demo" }
 
   stages {
-
-  ```
   stage('Build Image') {
       steps {
           container('docker') {
@@ -37,7 +35,6 @@ containers:
           }
       }
   }
-
   stage('Push Image') {
       steps {
           container('docker') {
@@ -49,13 +46,10 @@ containers:
           }
       }
   }
-
   stage('Deploy') {
       steps {
           sh 'helm upgrade devops-demo ./devops-demo'
       }
   }
-  ```
-
   }
   }
