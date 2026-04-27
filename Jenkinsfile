@@ -8,7 +8,7 @@ spec:
 containers:
 
 name: docker
-image: docker:27.0.3
+image: "docker:27.0.3"
 command:
 cat
 tty: true
