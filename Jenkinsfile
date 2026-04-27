@@ -1,11 +1,30 @@
 pipeline {
-agent any
+agent {
+kubernetes {
+yaml
+apiVersion: v1
+kind: Pod
+spec:
+containers:
+
+name: docker
+image: docker:27.0.3
+command:
+cat
+tty: true
+volumeMounts:
+name: docker-sock
+mountPath: /var/run/docker.sock
+volumes:
+name: docker-sock
+hostPath:
+path: /var/run/docker.sock
+}
+}
 environment {
     DOCKER_IMAGE = "mrdevops0959/devops-demo"
 }
-
 stages {
-
     stage('Clone Repo') {
         steps {
             git branch: 'main', url: 'https://github.com/raah959/a1-march.git'
