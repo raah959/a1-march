@@ -1,56 +1,42 @@
 pipeline {
-agent {
-kubernetes {
-yaml """
-apiVersion: v1
-kind: Pod
-spec:
-containers:
+agent any
+environment {
+    DOCKER_IMAGE = "mrdevops0959/devops-demo"
+}
 
-* name: docker
-  image: docker:27.0.3
-  command:
+stages {
 
-  * cat
-    tty: true
-    volumeMounts:
-  * name: docker-sock
-    mountPath: /var/run/docker.sock
-    volumes:
-* name: docker-sock
-  hostPath:
-  path: /var/run/docker.sock
-  """
-  }
-  }
+    stage('Clone Repo') {
+        steps {
+            git 'https://github.com/raah959/a1-march.git'
+        }
+    }
 
-  environment {
-  DOCKER_IMAGE = "mrdevops0959/devops-demo"
-  }
+    stage('Build Docker Image') {
+        steps {
+            sh 'docker build -t $DOCKER_IMAGE:v2 app/'
+        }
+    }
 
-  stages {
-  stage('Build Image') {
-      steps {
-          container('docker') {
-              sh 'docker build -t $DOCKER_IMAGE app/'
-          }
-      }
-  }
-  stage('Push Image') {
-      steps {
-          container('docker') {
-              script {
-                  docker.withRegistry('', 'dockerhub-creds') {
-                      docker.image("${DOCKER_IMAGE}").push()
-                  }
-              }
-          }
-      }
-  }
-  stage('Deploy') {
-      steps {
-          sh 'helm upgrade devops-demo ./devops-demo'
-      }
-  }
-  }
-  }
+    stage('Push Image') {
+        steps {
+            withCredentials([usernamePassword(
+                credentialsId: 'dockerhub-creds',
+                usernameVariable: 'DOCKER_USER',
+                passwordVariable: 'DOCKER_PASS'
+            )]) {
+                sh '''
+                echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                docker push $DOCKER_IMAGE:v2
+                '''
+            }
+        }
+    }
+
+    stage('Deploy with Helm') {
+        steps {
+            sh 'helm upgrade devops-demo ./devops-demo'
+        }
+    }
+}
+}
