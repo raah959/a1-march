@@ -38,8 +38,8 @@ spec:
 
         stage('Push Image') {
             steps {
-                container('docker') {
-                    sh 'docker push $DOCKER_IMAGE'
+                script {
+                    docker.withRegistry('', 'dockerhub-creds') { docker.image("${IMAGE_NAME}:latest").push()
                 }
             }
         }
