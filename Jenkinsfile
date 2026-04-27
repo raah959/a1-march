@@ -25,7 +25,8 @@ containers:
   }
 
   environment {
-  DOCKER_IMAGE = "mrdevops0959/devops-demo" }
+  DOCKER_IMAGE = "mrdevops0959/devops-demo"
+  }
 
   stages {
   stage('Build Image') {
