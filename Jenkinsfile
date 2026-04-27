@@ -1,53 +1,62 @@
 pipeline {
-    agent {
-        kubernetes {
-            yaml """
+agent {
+kubernetes {
+yaml """
 apiVersion: v1
 kind: Pod
 spec:
-  containers:
-  - name: docker
-    image: docker:27.0.3
-    command:
-    - cat
+containers:
+
+* name: docker
+  image: docker:27.0.3
+  command:
+
+  * cat
     tty: true
     volumeMounts:
-    - name: docker-sock
-      mountPath: /var/run/docker.sock
-  volumes:
-  - name: docker-sock
-    hostPath:
-      path: /var/run/docker.sock
-"""
-        }
-    }
+  * name: docker-sock
+    mountPath: /var/run/docker.sock
+    volumes:
+* name: docker-sock
+  hostPath:
+  path: /var/run/docker.sock
+  """
+  }
+  }
 
-    environment {
-        DOCKER_IMAGE = "mrdevops0959/devops-demo:v2"
-    }
+  environment {
+  DOCKER_IMAGE = "mrdevops0959/devops-demo:v2"
+  }
 
-    stages {
+  stages {
 
-        stage('Build Image') {
-            steps {
-                container('docker') {
-                    sh 'docker build -t $DOCKER_IMAGE app/'
-                }
-            }
-        }
+  ```
+  stage('Build Image') {
+      steps {
+          container('docker') {
+              sh 'docker build -t $DOCKER_IMAGE app/'
+          }
+      }
+  }
 
-        stage('Push Image') {
-            steps {
-                script {
-                    docker.withRegistry('', 'dockerhub-creds') { docker.image("${IMAGE_NAME}:latest").push()
-                }
-            }
-        }
+  stage('Push Image') {
+      steps {
+          container('docker') {
+              script {
+                  docker.withRegistry('', 'dockerhub-creds') {
+                      docker.image("${DOCKER_IMAGE}").push()
+                  }
+              }
+          }
+      }
+  }
 
-        stage('Deploy') {
-            steps {
-                sh 'helm upgrade devops-demo ./devops-demo'
-            }
-        }
-    }
-}
+  stage('Deploy') {
+      steps {
+          sh 'helm upgrade devops-demo ./devops-demo'
+      }
+  }
+  ```
+
+  }
+  }
