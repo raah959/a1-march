@@ -8,7 +8,7 @@ stages {
 
     stage('Clone Repo') {
         steps {
-            git 'https://github.com/raah959/a1-march.git'
+            git branch: 'main', url: 'https://github.com/raah959/a1-march.git'
         }
     }
 
