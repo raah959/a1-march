@@ -30,7 +30,7 @@ spec:
 
     environment {
         DOCKER_IMAGE = "mrdevops0959/devops-demo:"
-        IMAGE TAG = ${BUILD_NUMBER}
+        IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
     stages {
