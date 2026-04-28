@@ -19,7 +19,7 @@ spec:
     image: alpine/helm:3.14.0
     command:
     - cat
-      tty: true
+    tty: true
   volumes:
   - name: docker-sock
     hostPath:
