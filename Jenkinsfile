@@ -62,7 +62,7 @@ spec:
         stage('Deploy') {
             steps {
                 container('helm') {
-                sh 'helm upgrade devops-demo ./devops-demo'
+                sh 'helm upgrade --install devops-demo ./devops-demo'
                 }
             }
         }
