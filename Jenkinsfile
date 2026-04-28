@@ -29,7 +29,7 @@ spec:
     }
 
     environment {
-        DOCKER_IMAGE = "mrdevops0959/devops-demo:"
+        DOCKER_IMAGE = "mrdevops0959/devops-demo"
         IMAGE_TAG = "${BUILD_NUMBER}"
     }
 
