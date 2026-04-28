@@ -29,7 +29,8 @@ spec:
     }
 
     environment {
-        DOCKER_IMAGE = "mrdevops0959/devops-demo:v2"
+        DOCKER_IMAGE = "mrdevops0959/devops-demo:"
+        IMAGE TAG = ${BUILD_NUMBER}
     }
 
     stages {
@@ -37,7 +38,7 @@ spec:
         stage('Build Image') {
             steps {
                 container('docker') {
-                    sh 'docker build -t $DOCKER_IMAGE app/'
+                    sh 'docker build -t $DOCKER_IMAGE:$IMAGE_TAG app/'
                 }
             }
         }
@@ -52,7 +53,7 @@ spec:
                   )]) {
                       sh '''
                       echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                      docker push $DOCKER_IMAGE
+                      docker push $DOCKER_IMAGE:$IMAGE_TAG
                       '''
                   }
               }
