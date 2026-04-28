@@ -15,6 +15,11 @@ spec:
     volumeMounts:
     - name: docker-sock
       mountPath: /var/run/docker.sock
+  - name: helm
+    image: alpine/helm:3.14.0
+    command:
+    - cat
+      tty:true
   volumes:
   - name: docker-sock
     hostPath:
@@ -56,7 +61,9 @@ spec:
 
         stage('Deploy') {
             steps {
+                container('helm') {
                 sh 'helm upgrade devops-demo ./devops-demo'
+                }
             }
         }
     }
